@@ -1,9 +1,9 @@
 from django import forms
-from .models import Task
+from .models import TaskCreate
 
 class TaskForm(forms.ModelForm):
     class Meta:
-        model = Task  # Taskモデルとフォームを紐づける
+        model = TaskCreate   # TaskCreateモデルとフォームを紐づける
         fields = ['title', 'description', 'due_date', 'priority']  # フォームに表示したいフィールドを指定
         
         # 各フィールドに対してラベルやウィジェット（入力フォームの見た目）をカスタマイズできます。

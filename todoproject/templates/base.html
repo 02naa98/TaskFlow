@@ -17,6 +17,7 @@
                             <li>
                                 <form action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
+                                    <p>現在{{ user.username }}さんがログイン中</p>
                                     <button type="submit">ログアウト</button>
                                 </form>
                             </li>
