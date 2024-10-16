@@ -7,10 +7,13 @@
     <ul>
         {% for task in tasks %}
             <li>
-                {{ task.title }} - {{ task.priority }} - {{ task.due_date }}
+                {{ task.title }} - {{ task.priority }} - {{ task.due_date }} - {{ task.user.username }}
             </li>
         {% empty %}
             <li>タスクがありません。</li>
         {% endfor %}
     </ul>
+    <p>
+        <a href="{%url 'task_create' %}">タスクを作成する</a>
+    </p>
 {% endblock %}
