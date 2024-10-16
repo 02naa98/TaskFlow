@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TaskList{% endblock %}</title>
+</head>
+<!--ここは共通のレイアウトをまとめるhtml-->>
+<body>
+    <header>
+        <h1>TaskFlow</h1>
+        <nav>
+            <ul>
+                <nav>
+                    <ul>
+                        {% if request.user.is_authenticated %}
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">ログアウト</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">ログイン</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 TaskFlow</p>
+    </footer>
+</body>
+</html>

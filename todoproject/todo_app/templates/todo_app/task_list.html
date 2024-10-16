@@ -1,0 +1,16 @@
+{% extends 'base.html' %}  <!-- base.html を継承 -->
+
+{% block title %}タスクリスト{% endblock %}  <!-- タイトルを上書き -->
+
+{% block content %}
+    <h1>タスクリスト</h1>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }} - {{ task.priority }} - {{ task.due_date }}
+            </li>
+        {% empty %}
+            <li>タスクがありません。</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
