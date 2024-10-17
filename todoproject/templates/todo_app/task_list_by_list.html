@@ -1,0 +1,20 @@
+<!-- task_list_with_errors.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスク一覧</title>
+</head>
+<body>
+    <h1>{{ list.name }}のタスク</h1> <!-- リスト名を表示 -->
+
+    <ul>
+        {% for task in tasks %}
+            <li>{{ task.title }} - {{ task.due_date }}</li> <!-- タスクタイトルと期日を表示 -->
+        {% empty %}
+            <li>このリストにはタスクがありません。</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
