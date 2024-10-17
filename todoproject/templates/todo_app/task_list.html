@@ -4,15 +4,23 @@
 
 {% block content %}
     <h1>タスクリスト</h1>
+    {% for task_list, tasks in tasks_by_list.items %}
+    <li><input type="checkbox" name="list_ids" value="{{ list.id }}">{{ task_list.name }}</li>
+    {% endfor %}
+    <button type="submit">表示</button>
+    </ul>
+    <!-- リスト作成へのリンク -->
+    <a href="{%url 'list_create' %}">リスト作成へのリンク</a>
+    {% for task_list, tasks in tasks_by_list.items %}
+    <h2>{{ task_list.name }}</h2>
     <ul>
         {% for task in tasks %}
-            <li>
-                {{ task.title }} - {{ task.priority }} - {{ task.due_date }} - {{ task.user.username }}
-            </li>
+            <li>{{ task.title }}</li>
         {% empty %}
-            <li>タスクがありません。</li>
+            <li>タスクはまだ追加されていません。</li>
         {% endfor %}
     </ul>
+    {% endfor %}
     <p>
         <a href="{%url 'task_create' %}">タスクを作成する</a>
     </p>
