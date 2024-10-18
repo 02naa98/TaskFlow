@@ -1,3 +1,4 @@
+from typing import Any
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView
@@ -28,29 +29,18 @@ class TaskCreateView(CreateView):
 
 class TaskListView(ListView):
     model = TaskCreate  # 表示するモデル
-    template_name = 'todo_app/task_list_by_list.html'  # 使用するテンプレート
+    template_name = 'todo_app/task_list.html'  # 使用するテンプレート
     context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
 
+
     def get_queryset(self):
-        queryset = super().get_queryset()
-        selected_lists = self.request.GET.getlist('lists')
-        if selected_lists:
-            queryset = queryset.filter(list__id__in=selected_lists)
-        return queryset  # リストIDでタスクをフィルタリング
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['list'] = TaskList.objects.all()  # リスト名を取得
-        return context
+        return TaskList.objects.prefetch_related('taskcreate_set').all()
     
-    def get(self, request):
-        selected_list_ids=request.GET.getlist('list_ids') # チェックボックスで選択されたIDを取得
-        lists = TaskList.objects.all()  # 全リストを取得
-        tasks = TaskCreate.objects.all() #全タスクを取得
-
-        if selected_list_ids: #チェックボックスが選択された場合
-            tasks=tasks.filter(list_id__in=selected_list_ids) #選択されたリストのタスクのみを表示
-
-        return render(request,'todo_app/task_list.html',{'tasks':tasks,'lists':lists})
-
+    def get_context_data(self, **kwargs):
+        # 基本のコンテキストを取得
+        context = super().get_context_data(**kwargs)
+        # リストを取得して 'lists' という名前でコンテキストに追加
+        context['lists'] = self.get_queryset()  # リストごとのタスク
+        print(context)
+        return context
 
