@@ -1,26 +1,21 @@
 {% extends 'base.html' %}  <!-- base.html を継承 -->
 
-{% block title %}タスクリスト{% endblock %}  <!-- タイトルを上書き -->
+<title>{%block title%}TaskList{%endblock%}</title>  <!-- タイトルを上書き -->
 
 {% block content %}
     <h1>タスクリスト</h1>
-    {% for task_list, tasks in tasks_by_list.items %}
-    <li><input type="checkbox" name="list_ids" value="{{ list.id }}">{{ task_list.name }}</li>
-    {% endfor %}
-    <button type="submit">表示</button>
-    </ul>
     <!-- リスト作成へのリンク -->
     <a href="{%url 'list_create' %}">リスト作成へのリンク</a>
-    {% for task_list, tasks in tasks_by_list.items %}
-    <h2>{{ task_list.name }}</h2>
-    <ul>
-        {% for task in tasks %}
-            <li>{{ task.title }}</li>
-        {% empty %}
-            <li>タスクはまだ追加されていません。</li>
-        {% endfor %}
-    </ul>
-    {% endfor %}
+    {% for list in lists %}
+        <h2>{{ list.name }}(リスト名)</h2> <!-- リスト名を表示 -->
+        <ul>
+            {% for task in list.taskcreate_set.all %}
+                <li>{{ task.title }} - {{ task.due_date }} - {{ task.priority }} - {{ task.user.username }}</li> <!-- 表示項目 -->
+            {% empty %}
+                <li>タスクはまだ追加されていません。</li>
+            {% endfor %}
+        </ul>
+    {%endfor%}
     <p>
         <a href="{%url 'task_create' %}">タスクを作成する</a>
     </p>
