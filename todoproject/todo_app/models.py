@@ -16,6 +16,8 @@ class TaskCreate(models.Model):
     priority=models.IntegerField(choices=[(1, '高'), (2, '中'), (3, '低')]) #優先度(仮)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) #作成したユーザー
 
+    is_starred=models.BooleanField(default=False) #スターの状態
+
     list=models.ForeignKey(TaskList,on_delete=models.CASCADE,default=1) #リストモデルとの関係
 
     def __str__(self):
