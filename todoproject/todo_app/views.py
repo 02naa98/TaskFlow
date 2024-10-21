@@ -34,13 +34,21 @@ class TaskListView(ListView):
 
 
     def get_queryset(self):
-        return TaskList.objects.prefetch_related('taskcreate_set').all()
-    
+        TaskList.objects.prefetch_related('taskcreate_set').all()
+        list_ids=self.request.GET.getlist('list_ids')
+        if list_ids:
+            return TaskCreate.objects.filter(task_list__id__in=list_ids,user=self.request.user)
+        else:
+            return TaskCreate.objects.filter(user=self.request.user)
+        
     def get_context_data(self, **kwargs):
         # 基本のコンテキストを取得
         context = super().get_context_data(**kwargs)
+        
         # リストを取得して 'lists' という名前でコンテキストに追加
-        context['lists'] = self.get_queryset()  # リストごとのタスク
-        print(context)
+        context['lists'] = TaskList.objects.all()  # すべてのリストをコンテキストに追加
+        
+        context['filtered_tasks']=self.get_queryset()
+        
         return context
 

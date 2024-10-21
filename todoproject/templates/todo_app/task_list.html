@@ -3,20 +3,50 @@
 <title>{%block title%}TaskList{%endblock%}</title>  <!-- タイトルを上書き -->
 
 {% block content %}
-    <h1>タスクリスト</h1>
-    <!-- リスト作成へのリンク -->
-    <a href="{%url 'list_create' %}">リスト作成へのリンク</a>
-    {% for list in lists %}
-        <h2>{{ list.name }}(リスト名)</h2> <!-- リスト名を表示 -->
-        <ul>
-            {% for task in list.taskcreate_set.all %}
-                <li>{{ task.title }} - {{ task.due_date }} - {{ task.priority }} - {{ task.user.username }}</li> <!-- 表示項目 -->
-            {% empty %}
-                <li>タスクはまだ追加されていません。</li>
-            {% endfor %}
-        </ul>
-    {%endfor%}
-    <p>
-        <a href="{%url 'task_create' %}">タスクを作成する</a>
-    </p>
+    <style>
+        /* チェックボックスとラベルを横に並べる */
+        .container {
+            display: flex;
+        }
+        .list-filter {
+            width: 30%; /* 左側の幅を30%に設定 */
+            dding-right: 20px; /* 右側との間に余白を追加 */
+        }
+        .task-list {
+            width: 70%; /* 右側の幅を70%に設定 */
+        }
+    </style>
+
+    <div class='container'>
+        <!-- 左側: リスト名とチェックボックス -->
+        <div class='list-filter'>
+            <!-- リスト作成へのリンク -->
+            <a href="{%url 'list_create' %}">リスト作成へのリンク</a>
+            <h1>タスクリスト(filter by lists)</h1>
+
+            <form method='get' action=''>
+                {% for list in lists %}
+                    <input type='checkbox' name='list_filter' value='{{ list.id }}' id='list-{{ list.id }}'>
+                    <label><h4>{{ list.name }}(リスト名)</h4></label><!-- リスト名を表示 -->
+                    {%endfor%}
+                    <button type='submit'>フィルター適用</button>
+                </form>
+            </div>
+            <!-- 右側: タスク一覧 -->
+            <div class='task-list'>
+                <!-- タスク作成へのリンク -->
+                <a href="{%url 'task_create' %}">タスクを作成する</a>
+            <h1>タスク一覧</h1>
+            {% for list in lists %}
+                <h2>{{ list.name }}(リスト名)</h2> <!-- リスト名を表示 -->
+                <ul>
+                    {% for task in list.taskcreate_set.all %}
+                        <li>{{ task.title }} - {{ task.due_date }} - {{ task.priority }} - {{ task.user.username }}</li> <!-- 表示項目 -->
+                    {% empty %}
+                        <li>タスクはまだ追加されていません。</li>
+                    {% endfor %}
+                </ul>
+            {%endfor%}
+        </div>
+    </div>
 {% endblock %}
