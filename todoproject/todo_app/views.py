@@ -1,9 +1,10 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
-from django.views.generic import CreateView,ListView
+from django.views.generic import CreateView,ListView,UpdateView,DeleteView
 from django.views import View
 from django.shortcuts import redirect,render,get_object_or_404
+from django.http import JsonResponse
 from .models import TaskCreate,TaskList
 from .forms import TaskForm,ListForm
 
@@ -27,6 +28,31 @@ class TaskCreateView(CreateView):
         return super().form_valid(form)
     def get_queryset(self): #現在ログインしているユーザーが作成したタスクを取得
         return TaskCreate.objects.filter(user=self.request.user)
+    
+    def post(self,request,*args,**kwargs):
+        #質問フォームへの回答が送信された場合
+        if 'question1' in request.POST and 'question2' in request.POST:
+            question1_answer = request.POST['question1']
+            question2_answer = request.POST['question2']
+            task_id=request.POST.get('task_id')
+
+        #ユーザーの回答に基づいてリストを決定するロジック
+            selected_list=None
+            if question1_answer == 'yes' and question2_answer == 'yes':
+                selected_list = TaskList.objects.filter(name='重要リスト').first()
+            elif question1_answer == 'no' and question2_answer == 'no':
+                selected_list = TaskList.objects.filter(name='通常リスト').first()
+            else:
+                selected_list = TaskList.objects.filter(name='その他リスト').first()
+            
+            #タスクを決定したリストに追加
+            task=TaskCreate.objects.get(id=task_id)
+            if selected_list:
+                selected_list.task.add(task)
+
+            return JsonResponse({'success':True, 'redirect_url':self.success_url})
+    
+        return super().post(request,*args,**kwargs)
 
 class TaskListView(ListView):
     model = TaskCreate  # 表示するモデル
@@ -61,8 +87,34 @@ class TaskListView(ListView):
         return context
 
 class ToggleStarView(View):
-    def get(self, task_id):
+    def post(self,request,task_id):
+        print(f"Request POST data: {request.POST}")  # POSTリクエストのデータを表示
+        print(f"Received task_id: {task_id}")  # デバッグ用
         task = get_object_or_404(TaskCreate, id=task_id)
         task.is_starred = not task.is_starred  # スターの状態を反転
         task.save()  # タスクを保存
+        print(f"After toggle, is_starred: {task.is_starred}")
+
         return redirect('task_list')  # タスク一覧ページにリダイレクト
+    
+class TaskUpdateView(UpdateView):
+    model=TaskCreate
+    form_class=TaskForm
+    template_name='todo_app/task_update.html'
+    success_url=reverse_lazy('task_list')
+
+    def get_object(self, queryset=None):
+        #デバッグ
+        print(f"kwargs: {self.kwargs}")
+        pk = self.kwargs.get('pk')
+        if pk is None:
+            raise ValueError("pkが定義されていません")
+        print(f"Requested task ID: {self.kwargs.get('pk')}")
+
+        obj = super().get_object(queryset)
+        print(obj)  # デバッグ用にタスクオブジェクトを表示
+        return obj
+    
+class TaskDeleteView(DeleteView):
+    model=TaskCreate
+    success_url=reverse_lazy('task_list')

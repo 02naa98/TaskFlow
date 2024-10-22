@@ -1,24 +1,29 @@
 {% extends 'base.html' %}  <!-- base.html を継承 -->
+{% load static %}
 
 <title>{%block title%}TaskList{%endblock%}</title>  <!-- タイトルを上書き -->
 
+<head>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
 {% block content %}
     <style>
-        /* チェックボックスとラベルを横に並べる */
         .container {
             display: flex;
         }
         .list-filter {
-            width: 30%; /* 左側の幅を30%に設定 */
-            padding-right: 20px; /* 右側との間に余白を追加 */
+            width: 50%; /* 左側の幅を30%に設定 */
         }
         .task-list {
-            width: 70%; /* 右側の幅を70%に設定 */
+            width: 50%; /* 左側の幅を30%に設定 */
+        }
+        .star-list {
+            width: 40%; /* 右側の幅を70%に設定 */
         }
     </style>
-
     <div class='container'>
-        <!-- 左側: リスト名とチェックボックス -->
+        <!-- 左側：リスト名とチェックボックス -->
         <div class='list-filter'>
             <!-- リスト作成へのリンク -->
             <a href="{%url 'list_create' %}">新しいリスト作成</a>
@@ -33,7 +38,7 @@
                     <button onclick="clearCheckboxes()">一覧表示に戻す</button>
                 </form>
             </div>
-            <!-- 右側: タスク一覧 -->
+            <!-- ２列目：タスク一覧 -->
             <div class='task-list'>
                 <!-- タスク作成へのリンク -->
                 <a href="{%url 'task_create' %}">タスクを作成する</a>
@@ -44,7 +49,7 @@
                     {% for task in list.taskcreate_set.all %}
                     <li>
                         {{ task.title }} - {{ task.due_date }} - {{ task.priority }} - {{ task.user.username }} <!-- 表示項目 -->
-                        <form action="{% url 'toggle_star' task.id %}" method="method">
+                        <form action="{% url 'toggle_star' task.id %}" method="post">
                             {% csrf_token %}
                             <button type="submit">
                                 {% if task.is_starred %}
@@ -54,25 +59,40 @@
                                 {% endif %}
                             </button>
                         </form>
+                        <!-- 編集ボタン -->
+                        <a href="{% url 'task_update' task.id %}">更新</a>
+                        
+                        <!-- 削除ボタン　ポップアップ&ダイヤログ -->
+                        <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDelete();">
+                            {% csrf_token %}
+                            <button type="submit">削除</button>
+                        </form>
                     </li>
                     {% empty %}
                     <li>タスクはまだ追加されていません。</li>
                     {% endfor %}
                 </ul>
             {%endfor%}
+            <script>
+                function confirmDelete() {
+                    return confirm("本当に削除しますか？");
+                }
+            </script>
+        </div>
+        <!-- 右側：スター付きタスクのみを表示 -->
+         <div class="star-list">
+             <h1>★スター付き</h1>
+             <ul>
+                 {% for task in tasks %}
+                    {% if task.is_starred %}
+                    <li>
+                        {{ task.title }} - {{ task.due_date }} - {{ task.user.username }} - {{ task.list.name }}
+                    </li>
+                    {%endif%}
+                {% empty %}
+                    <li>スター付きタスクはありません。</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
-    <!-- スター付きタスクのみを表示 -->
-    <h2>スター付きタスク</h2>
-    <ul>
-        {% for task in tasks %}
-                {% if task.is_starred %}
-                <li>
-                    {{ task.title }} - {{ task.due_date }} - {{ task.priority }} - {{ task.user.username }}
-                </li>
-                {%endif%}
-        {% empty %}
-            <li>スター付きタスクはありません。</li>
-        {% endfor %}
-    </ul>
 {% endblock %}
