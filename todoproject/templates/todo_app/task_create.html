@@ -5,12 +5,36 @@
 
 {% block content %}
     <h1>タスクを作成する</h1>
+    <!--Java１　トリガー-->
+    <form id="taskForm" action="{% url 'task_create' %}" method="post" onsubmit="return showQuestions();">
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+            {% csrf_token %}
         <button type="submit">作成</button>
     </form>
     <p>
         <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
     </p>
+
+
+    <script>
+        function showQuestions() {
+            document.getElementById('question1').style.display = 'block'; // 1問目を表示
+        }
+
+        function answerQuestion(questionNumber, answer) {
+            if (questionNumber === 1) {
+                document.getElementById('question1').style.display = 'none'; // 1問目を非表示
+                document.getElementById('question2').style.display = 'block'; // 2問目を表示
+            } else if (questionNumber === 2) {
+                // 2問目の回答を受け取った後、リストページにリダイレクト
+                window.location.href = "list.html"; // リストページのURL
+            }
+            console.log(`質問${questionNumber}の回答: ${answer ? "はい" : "いいえ"}`); // 回答をコンソールに表示
+        }
+
+        // ページがロードされたときに質問を表示
+        window.onload = showQuestions;
+    </script>
 {% endblock %}
