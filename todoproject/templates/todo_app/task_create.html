@@ -4,14 +4,15 @@
 <title>{%block title%}TaskCreate{%endblock%}</title>
 
 {% block content %}
+    <script>
+        const taskListUrl = "{% url 'task_list' %}";
+    </script>
     <h1>タスクを作成する</h1>
     <!--Java１　トリガー-->
-    <form id="taskForm" action="{% url 'task_create' %}" method="post" onsubmit="return showQuestions();">
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-            {% csrf_token %}
-        <button type="submit">作成</button>
+    <form id="taskForm" action="{% url 'task_create' %}" method="post" onsubmit="return false;">
+        {%csrf_token%}
+        {{ form.as_p }}  <!-- フォームを表示 -->
+        <button type="submit" onclick="showPrompt()">作成</button>
     </form>
     <p>
         <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
@@ -19,22 +20,30 @@
 
 
     <script>
-        function showQuestions() {
-            document.getElementById('question1').style.display = 'block'; // 1問目を表示
-        }
+        function showPrompt() {
+            alert('具体的な行動まで落とし込めているかを聞かれています。');
+            const answer1 = prompt("実行可能か？ (yes/no)"); // 1問目
 
-        function answerQuestion(questionNumber, answer) {
-            if (questionNumber === 1) {
-                document.getElementById('question1').style.display = 'none'; // 1問目を非表示
-                document.getElementById('question2').style.display = 'block'; // 2問目を表示
-            } else if (questionNumber === 2) {
-                // 2問目の回答を受け取った後、リストページにリダイレクト
-                window.location.href = "list.html"; // リストページのURL
+            if (answer1 === "yes") {
+                const answer2 = prompt("test question2？ (yes/no)"); // 2問目
+
+                if (answer2 === "yes") {
+                    const answer3 = prompt("それを2分でできますか？ (yes/no)"); // 3問目
+
+                    if (answer3 === "yes") {
+                        alert('今すぐやりましょう');
+                        document.getElementById('taskForm').submit(); // フォームを送信
+                    } else if (answer3 === "no") {
+                        window.location.href = taskListUrl; // 一覧ページにリダイレクト
+                    }
+                } else if (answer2 === "no") {
+                    const projectListId = "11"
+                    document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
+                    document.getElementById('taskForm').submit(); // フォームを送信
+                }
+            } else if (answer1 === "no") {
+                window.location.href = taskListUrl; // 一覧ページにリダイレクト
             }
-            console.log(`質問${questionNumber}の回答: ${answer ? "はい" : "いいえ"}`); // 回答をコンソールに表示
         }
-
-        // ページがロードされたときに質問を表示
-        window.onload = showQuestions;
     </script>
 {% endblock %}

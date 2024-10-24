@@ -33,6 +33,15 @@
                 {% for list in lists %}
                     <input type='checkbox' name='list_ids' value='{{ list.id }}' id='list-{{ list.id }}'>
                     <label><h4>{{ list.name }}(リスト名)</h4></label><!-- リスト名を表示 -->
+                    
+                    <!-- リスト編集ボタン -->
+                    <a href="{% url 'list_update' list.id %}">更新</a>
+    
+                    <!-- リスト削除ボタン　ポップアップ&ダイヤログ -->
+                    <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
+                        {% csrf_token %}
+                        <button type="submit">削除</button>
+                    </form>
                 {%endfor%}
                     <button type='submit'>フィルター適用</button>
                     <button onclick="clearCheckboxes()">一覧表示に戻す</button>
@@ -59,11 +68,11 @@
                                 {% endif %}
                             </button>
                         </form>
-                        <!-- 編集ボタン -->
+                        <!-- タスク編集ボタン -->
                         <a href="{% url 'task_update' task.id %}">更新</a>
                         
-                        <!-- 削除ボタン　ポップアップ&ダイヤログ -->
-                        <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDelete();">
+                        <!-- タスク削除ボタン　ポップアップ&ダイヤログ -->
+                        <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDeleteTask();">
                             {% csrf_token %}
                             <button type="submit">削除</button>
                         </form>
@@ -74,7 +83,10 @@
                 </ul>
             {%endfor%}
             <script>
-                function confirmDelete() {
+                function confirmDeleteList() {
+                    return confirm("このリストを削除しますか？ このリスト上のすべてのタスクが完全に削除されます。");
+                }
+                function confirmDeleteTask() {
                     return confirm("本当に削除しますか？");
                 }
             </script>

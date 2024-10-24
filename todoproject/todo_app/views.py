@@ -16,6 +16,7 @@ class ListCreateView(CreateView):
     template_name='todo_app/list_create.html'
     success_url=reverse_lazy('task_list')
 
+#タスク作成+質問
 class TaskCreateView(CreateView):
     model = TaskCreate #表示するモデル
     form_class = TaskForm #表示するフォーム
@@ -31,29 +32,10 @@ class TaskCreateView(CreateView):
     
     def post(self,request,*args,**kwargs):
         #質問フォームへの回答が送信された場合
-        if 'question1' in request.POST and 'question2' in request.POST:
-            question1_answer = request.POST['question1']
-            question2_answer = request.POST['question2']
-            task_id=request.POST.get('task_id')
-
-        #ユーザーの回答に基づいてリストを決定するロジック
-            selected_list=None
-            if question1_answer == 'yes' and question2_answer == 'yes':
-                selected_list = TaskList.objects.filter(name='重要リスト').first()
-            elif question1_answer == 'no' and question2_answer == 'no':
-                selected_list = TaskList.objects.filter(name='通常リスト').first()
-            else:
-                selected_list = TaskList.objects.filter(name='その他リスト').first()
-            
-            #タスクを決定したリストに追加
-            task=TaskCreate.objects.get(id=task_id)
-            if selected_list:
-                selected_list.task.add(task)
-
-            return JsonResponse({'success':True, 'redirect_url':self.success_url})
     
         return super().post(request,*args,**kwargs)
 
+#タスク一覧表示
 class TaskListView(ListView):
     model = TaskCreate  # 表示するモデル
     template_name = 'todo_app/task_list.html'  # 使用するテンプレート
@@ -86,6 +68,7 @@ class TaskListView(ListView):
         
         return context
 
+#スターの付け外しとスタータスクの表示
 class ToggleStarView(View):
     def post(self,request,task_id):
         print(f"Request POST data: {request.POST}")  # POSTリクエストのデータを表示
@@ -96,7 +79,8 @@ class ToggleStarView(View):
         print(f"After toggle, is_starred: {task.is_starred}")
 
         return redirect('task_list')  # タスク一覧ページにリダイレクト
-    
+
+#タスクのUpdate
 class TaskUpdateView(UpdateView):
     model=TaskCreate
     form_class=TaskForm
@@ -114,7 +98,27 @@ class TaskUpdateView(UpdateView):
         obj = super().get_object(queryset)
         print(obj)  # デバッグ用にタスクオブジェクトを表示
         return obj
-    
+
+#タスクのDelete
 class TaskDeleteView(DeleteView):
     model=TaskCreate
     success_url=reverse_lazy('task_list')
+
+#リストのUpdate(rename)
+class ListUpdateView(UpdateView):
+    model=TaskList
+    form_class=ListForm
+    template_name='todo_app/list_update.html'
+    success_url=reverse_lazy('task_list')
+
+#リストのDelete(リスト内のタスクごと削除)
+class ListDeleteView(DeleteView):
+    model=TaskList
+    success_url=reverse_lazy('task_list')
+
+    def post(self,request,*args,**kwargs):
+        self.object=self.get_object()
+        #リスト内のタスク削除
+        self.object.taskcreate_set.all().delete()
+        self.object.delete() #リスト削除
+        return redirect(self.success_url)
