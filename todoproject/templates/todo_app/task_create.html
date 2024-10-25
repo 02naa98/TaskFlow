@@ -32,6 +32,8 @@
 
                     if (answer3 === "yes") {
                         alert('今すぐやりましょう');
+                        const projectListId = "12"
+                        document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                         document.getElementById('taskForm').submit(); // フォームを送信
                     } else if (answer3 === "no") {
                         window.location.href = taskListUrl; // 一覧ページにリダイレクト

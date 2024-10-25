@@ -9,7 +9,7 @@ from .models import TaskCreate,TaskList
 from .forms import TaskForm,ListForm
 
 
-#リスト作成
+#リスト作成 
 class ListCreateView(CreateView):
     model=TaskList
     form_class=ListForm
@@ -25,14 +25,22 @@ class TaskCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.user=self.request.user #現在のユーザーを設定
-        # フォームが有効な場合の処理
+
+        #クエリパラメータからList_idを取得
+        list_id=self.request.GET.get('list_id',None)
+        if list_id:
+            #クエリパラメータのList_idに対応するリストを取得
+            form.instance.list=get_object_or_404(TaskList,id=list_id)
+        else:
+            #List_idが指定されていない場合、デフォルトリストを指定
+            form.instance.list=get_object_or_404(TaskList,id=1)
         return super().form_valid(form)
+    
     def get_queryset(self): #現在ログインしているユーザーが作成したタスクを取得
         return TaskCreate.objects.filter(user=self.request.user)
     
     def post(self,request,*args,**kwargs):
         #質問フォームへの回答が送信された場合
-    
         return super().post(request,*args,**kwargs)
 
 #タスク一覧表示
