@@ -2,11 +2,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<li><a href="{% url 'signup' %}">サインアップ</a></li> <!-- サインアップへのリンク -->
 <h2>Login</h2>
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit"  class="btn btn-primary">Login</button>
 </form>
-<li><a href="{% url 'signup' %}">サインアップ</a></li> <!-- サインアップへのリンク -->
 {% endblock %}
