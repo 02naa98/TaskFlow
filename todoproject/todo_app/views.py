@@ -49,32 +49,49 @@ class TaskListView(ListView):
     template_name = 'todo_app/task_list.html'  # 使用するテンプレート
     context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
 
-    #返り値の中身はフィルタリングされたデータが入ったリスト
+    #ユーザーに属する全てのタスク
     def get_queryset(self):
-        TaskList.objects.prefetch_related('taskcreate_set').all()
-        list_ids=self.request.GET.getlist('list_ids')
-        print(f"list_ids: {list_ids}")  # list_idsの内容を出力
-        if list_ids:
-            queryset = TaskCreate.objects.filter(list__id__in=list_ids, user=self.request.user)
-            print(f"Filtered tasks: {queryset}")  # フィルタリングされたタスクを出力
-            return TaskCreate.objects.filter(list__id__in=list_ids,user=self.request.user)
-        else:
-            return TaskCreate.objects.filter(user=self.request.user)
-        
+        return TaskCreate.objects.filter(user=self.request.user)
+    #リスト
     def get_context_data(self, **kwargs):
         # 基本のコンテキストを取得
         context = super().get_context_data(**kwargs)
-        
-        list_ids = self.request.GET.getlist('list_ids')
-        # リストを取得して 'lists' という名前でコンテキストに追加
-        if list_ids:
-            context['lists'] = TaskList.objects.filter(id__in=list_ids)  # 選択されたリストのみ取得
-        else:
-            context['lists'] = TaskList.objects.all()  # チェックがない場合は全リスト取得
-        
-        context['filtered_tasks']=self.get_queryset()
-        
+        context['lists'] = TaskList.objects.all()  # すべてのリストを表示
         return context
+    
+#タスク(リストごと)フィルタリング
+class TaskFilterView(ListView):
+    model = TaskCreate  # 表示するモデル
+    template_name = 'todo_app/task_list.html'  # 使用するテンプレート
+    context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
+
+    #リスト内のタスクに関して
+    def get_queryset(self):
+        #選択したcheckbox=list_idに基いてフィルタリング
+        TaskList.objects.prefetch_related('taskcreate_set').all()
+        list_ids=self.request.GET.getlist('list_ids')
+        print(f"list_ids: {list_ids}")  # list_idsの内容を出力
+
+        if list_ids:
+            queryset = TaskCreate.objects.filter(list__id__in=list_ids, user=self.request.user)
+            print(f"Filtered tasks: {queryset}")  # フィルタリングされたタスクを出力
+            return TaskCreate.objects.filter(list__id__in=list_ids, user=self.request.user)
+        else:
+            #checkなし
+            return TaskCreate.objects.filter(user=self.request.user)
+    #リストに関して
+    def get_context_data(self,**kwargs):
+        context=super().get_context_data(**kwargs)
+        list_ids=self.request.GET.getlist('list_ids')
+        print(f"list_ids: {list_ids}")  # list_idsの内容を出力
+        
+        if list_ids:
+            context['lists']=TaskList.objects.filter(id__in=list_ids)
+        else:
+            context['lists']=TaskList.objects.filter(user=self.request.user)
+
+        return context
+
 
 #スターの付け外しとスタータスクの表示
 class ToggleStarView(View):
