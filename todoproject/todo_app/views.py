@@ -2,14 +2,45 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
+from django.views.generic.edit import FormView
 from django.views import View
 from django.shortcuts import redirect,render,get_object_or_404
 from django.http import JsonResponse
 from .models import TaskCreate,TaskList
-from .forms import TaskForm,ListForm
+from .forms import TaskForm,ListForm,ListSelectForm
+
+#簡易チェックリスト
+class ListSelectView(FormView):
+    template_name = 'todo_app/list_select_form.html'  # 使用するテンプレート
+    form_class = ListSelectForm  # 使用するフォーム
+    success_url = reverse_lazy('task_list')  # フォーム送信後のリダイレクト先
+
+    def form_valid(self, form):
+        return super().form_valid(form)  # フォームが正常に送信された場合はリダイレクト
 
 
-#リスト作成 
+#タスク一覧表示
+class TaskListView(ListView):
+    model = TaskCreate  # 表示するモデル
+    template_name = 'todo_app/task_list.html'  # 使用するテンプレート
+    context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
+
+    #ユーザーに属する全てのタスク
+    def get_queryset(self):
+        return TaskCreate.objects.filter(user=self.request.user)
+    #リスト
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 基本のコンテキストを取得
+        filter_name = self.request.GET.get('filter_name', '')
+        if filter_name:
+            context['lists'] = TaskList.objects.filter(name__icontains=filter_name)  # 部分一致でフィルタリング
+        else:
+            context['lists'] = TaskList.objects.all()  # すべてのリストを表示
+
+        return context
+
+#リスト作成
 class ListCreateView(CreateView):
     model=TaskList
     form_class=ListForm
@@ -43,54 +74,6 @@ class TaskCreateView(CreateView):
         #質問フォームへの回答が送信された場合
         return super().post(request,*args,**kwargs)
 
-#タスク一覧表示
-class TaskListView(ListView):
-    model = TaskCreate  # 表示するモデル
-    template_name = 'todo_app/task_list.html'  # 使用するテンプレート
-    context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
-
-    #ユーザーに属する全てのタスク
-    def get_queryset(self):
-        return TaskCreate.objects.filter(user=self.request.user)
-    #リスト
-    def get_context_data(self, **kwargs):
-        # 基本のコンテキストを取得
-        context = super().get_context_data(**kwargs)
-        context['lists'] = TaskList.objects.all()  # すべてのリストを表示
-        return context
-    
-#タスク(リストごと)フィルタリング
-class TaskFilterView(ListView):
-    model = TaskCreate  # 表示するモデル
-    template_name = 'todo_app/task_list.html'  # 使用するテンプレート
-    context_object_name = 'tasks'  # テンプレートで使用するオブジェクト名
-
-    #リスト内のタスクに関して
-    def get_queryset(self):
-        #選択したcheckbox=list_idに基いてフィルタリング
-        TaskList.objects.prefetch_related('taskcreate_set').all()
-        list_ids=self.request.GET.getlist('list_ids')
-        print(f"list_ids: {list_ids}")  # list_idsの内容を出力
-
-        if list_ids:
-            queryset = TaskCreate.objects.filter(list__id__in=list_ids, user=self.request.user)
-            print(f"Filtered tasks: {queryset}")  # フィルタリングされたタスクを出力
-            return TaskCreate.objects.filter(list__id__in=list_ids, user=self.request.user)
-        else:
-            #checkなし
-            return TaskCreate.objects.filter(user=self.request.user)
-    #リストに関して
-    def get_context_data(self,**kwargs):
-        context=super().get_context_data(**kwargs)
-        list_ids=self.request.GET.getlist('list_ids')
-        print(f"list_ids: {list_ids}")  # list_idsの内容を出力
-        
-        if list_ids:
-            context['lists']=TaskList.objects.filter(id__in=list_ids)
-        else:
-            context['lists']=TaskList.objects.filter(user=self.request.user)
-
-        return context
 
 
 #スターの付け外しとスタータスクの表示
