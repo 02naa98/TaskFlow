@@ -38,6 +38,31 @@
         .task-list {
             width: 50%; /* 左側の幅 */
         }
+        .btn-group button {
+            height: 40px; /* ボタンの高さを指定 */
+            padding: 0 15px; /* ボタン内の左右パディング */
+            font-size: 14px; /* フォントサイズを指定 */
+            cursor: pointer; /* カーソルをポインタに */
+        }
+        .button {
+            background-color: transparent; /* 背景色は透明 */
+            color: #007bff; /* テキストの色 */
+            padding: 10px 20px; /* パディング */
+            font-size: 16px; /* フォントサイズ */
+            border: none; /* 初期状態でボーダーはなし */
+            cursor: pointer; /* カーソルをポインターに */
+            border-radius: 100px; /* ボーダーの角を丸くする */
+        }
+        .btn-group button:not(:last-child) {
+            border-right: 1px solid #007bff; /* 最後のボタン以外の右側に線を追加 */
+            padding-right: 10px; /* 線のスペースを確保 */
+            margin-right: 10px; /* ボタン間のスペース */
+        }
+        
+        .btn-group button:hover {
+            background-color: rgba(0, 123, 255, 0.1); /* ホバー時の背景色 */
+        }
+
         .star-list {
             width: 40%; /* 右側の幅 */
         }
@@ -49,62 +74,64 @@
             <a href="{%url 'list_create' %}">新しいリストを作成する</a>
             <h1>タスクリスト</h1>
 
-            <form method='get' action="{%url 'task_filter' %}">
-                <h3>リストを選択</h3>
+                <a href="{%url 'select_list'%}"><h3>リストを選択</h3></a>
                 <ul>
                     {% for list in lists %}
                         <li style="display: flex; align-items: center; justify-content: space-between;">
-                            <!--リストソート-->
-                            <input type="checkbox" id="check2">
-                            <label for="check2" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">{{ list.name }}</label>
-                            <input type="checkbox" name="list_ids" value="{{ list.id }}" id="checkbox2">
-                            <label for="checkbox" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">{{ list.name }}</label>
-                                
-                            <div class="btn-group" > <!--デフォルト表示-->
+                            <label>
+                                {{ list.name }}
+                            </label>
+                            <div class="btn-group" >
                                 <!-- リスト編集ボタン -->
-                                <form action="{% url 'list_update' list.id %}">
-                                    {%csrf_token%}
-                                    <button type="submit" class="button">更新</button>
-                                </form>
-                                
                                 <!-- リスト削除ボタン　ポップアップ&ダイヤログ -->
-                                <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
-                                    {% csrf_token %}
-                                    <button type="submit">削除</button>
-                                </form>
                             </div>
                         </li>
-                    {%endfor%}
+                        {%endfor%}
                 </ul>
                 <br>
                 <!--リストソート適用ボタン-->
-                    <button type='submit' class="btn btn-primary">フィルター適用</button>
-                    <button onclick="clearCheckboxes()">一覧表示に戻す</button>
             </form>
         </div>
         
         <script>
         //list-filter
-        function confirmDeleteList() {
-            return confirm("このリストを削除しますか？ このリスト上のすべてのタスクが完全に削除されます。");
-        }
         </script>
 
-        <!-- ２列目：タスク一覧 -->
-        <div class='task-list'>
+<!-- ２列目：タスク一覧 -->
+<div class='task-list'>
                 <!-- タスク作成へのリンク -->
                 <a href="{%url 'task_create' %}">タスクを作成する</a>
-            <h1>タスク一覧</h1>
-            {% for list in lists %}
+                <form method="get">
+                    <label for="filter_name">名前でフィルタリング:</label>
+                    <input type="text" name="filter_name" id="filter_name" placeholder="名前を入力">
+                    <button type="submit">検索</button>
+                </form>
+                <h1>タスク一覧</h1>
+                {% for list in lists %}
                 <div class="list-container" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">
                     <h2>{{ list.name }}</h2> <!-- リスト名を表示 -->
+                    <div class="btn-group"
+                    onmouseover="showBorder(this)"
+                    onmouseout="hideBorder(this)"
+                    >
+                        <!--リスト更新-->
+                        <form action="{% url 'list_update' list.id %}">
+                            {%csrf_token%}
+                            <button type="submit" class="button">更新</button>
+                        </form>
+                        <!--リスト削除-->
+                        <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
+                            {% csrf_token %}
+                            <button type="submit" class="button">削除</button>
+                        </form>
+                    </div>
                     <ul>
                         {% for task in list.taskcreate_set.all %}
                         <li style="display: flex; align-items: center; justify-content: space-between;">
                             <span>
                                 {{ task.title }} - {{ task.due_date }} - {{ task.user.username }} <!-- 表示項目 -->
                             </span>
-                        <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
+                            <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
                             {% csrf_token %}
                             <button type="submit">
                                 {% if task.is_starred %}
@@ -114,7 +141,7 @@
                                 {% endif %}
                             </button>
                         <div class='btn-group'>
-                            </form>
+                        </form>
                             <!-- タスク編集ボタン -->
                             <form action="{% url 'task_update' list.id %}" method="get">
                                 <button type="submit" class="btn btn-success">更新</button>
@@ -135,8 +162,13 @@
             {%endfor%}
             <script>
                 //task-list
+                //タスク削除
                 function confirmDeleteTask() {
                     return confirm("本当に削除しますか？");
+                }
+                //リスト削除
+                function confirmDeleteList() {
+                    return confirm("このリストを削除しますか？ このリスト上のすべてのタスクが完全に削除されます。");
                 }
                 function showBorder(element) {
                     element.style.border = "2px solid #007bff"; // ホバー時の枠線の色

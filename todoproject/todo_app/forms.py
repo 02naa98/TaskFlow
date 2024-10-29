@@ -7,6 +7,14 @@ class ListForm(forms.ModelForm):
         model=TaskList
         fields=['name'] #リストの名前を入力　
 
+class ListSelectForm(forms.Form):
+    lists=forms.ModelMultipleChoiceField(  # ModelChoiceFieldではなくModelMultipleChoiceFieldを使用
+        label='リスト選択',
+        required=False,
+        queryset=TaskList.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class':'checkbox'}),
+    )
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = TaskCreate   # TaskCreateモデルとフォームを紐づける

@@ -21,31 +21,40 @@
 
     <script>
         function showPrompt() {
-            alert('具体的な行動まで落とし込めているかを聞かれています。');
-            const answer1 = prompt("実行可能か？ (yes/no)"); // 1問目
+            const answer = prompt("タスクに対して質問を受け付けますか？ (yes/no)")
 
-            if (answer1 === "yes") {
-                const answer2 = prompt("test question2？ (yes/no)"); // 2問目
-
-                if (answer2 === "yes") {
-                    const answer3 = prompt("それを2分でできますか？ (yes/no)"); // 3問目
-
-                    if (answer3 === "yes") {
-                        alert('今すぐやりましょう');
-                        const projectListId = "12"
+            if (answer ==="no") {
+                const projectListId ="16"
+                document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
+                document.getElementById('taskForm').submit(); // フォームを送信
+            } else if (answer ==="yes") {
+                alert('具体的な行動まで落とし込めているかを聞かれています。');
+                const answer1 = prompt("実行可能か？ (yes/no)"); // 1問目
+    
+                if (answer1 === "yes") {
+                    const answer2 = prompt("test question2？ (yes/no)"); // 2問目
+    
+                    if (answer2 === "yes") {
+                        const answer3 = prompt("それを2分でできますか？ (yes/no)"); // 3問目
+    
+                        if (answer3 === "yes") {
+                            alert('今すぐやりましょう');
+                            const projectListId = "12"
+                            document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
+                            document.getElementById('taskForm').submit(); // フォームを送信
+                        } else if (answer3 === "no") {
+                            window.location.href = taskListUrl; // 一覧ページにリダイレクト
+                        }
+                    } else if (answer2 === "no") {
+                        const projectListId = "11"
                         document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                         document.getElementById('taskForm').submit(); // フォームを送信
-                    } else if (answer3 === "no") {
-                        window.location.href = taskListUrl; // 一覧ページにリダイレクト
                     }
-                } else if (answer2 === "no") {
-                    const projectListId = "11"
-                    document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
-                    document.getElementById('taskForm').submit(); // フォームを送信
+                } else if (answer1 === "no") {
+                    window.location.href = taskListUrl; // 一覧ページにリダイレクト
                 }
-            } else if (answer1 === "no") {
-                window.location.href = taskListUrl; // 一覧ページにリダイレクト
             }
+
         }
     </script>
 {% endblock %}
