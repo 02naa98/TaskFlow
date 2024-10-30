@@ -1,7 +1,7 @@
 {% extends 'base.html' %}  <!-- base.html を継承 -->
 {% load static %}
 
-<title>{%block title%}TaskList{%endblock%}</title>  <!-- タイトルを上書き -->
+<title>{% block title %}TaskList{% endblock %}</title>  <!-- タイトルを上書き -->
 
 <head>
     <link rel="stylesheet" href="{% static 'style.css' %}">
@@ -10,190 +10,210 @@
 {% block content %}
     <style>
         .container {
-            display: flex;
+            display: flex; /* フレックスボックスで横並びに */
+            justify-content: space-between; /* 各列の間にスペースを配置 */
         }
         .list-filter {
-            width: 25%;
+            width: 25%; /* 左側の列の幅 */
         }
         input[type="checkbox"] {
-        display: none;
+            display: none; /* チェックボックスを非表示 */
         }
         label {
-        display: inline-block;
-        border-radius: 20px;
-        text-align: center;
-        text-decoration: none;
-        border: solid 1px #ccc;
-        transition: 0.25s;
-        padding: 6px 18px;
-        cursor: pointer;
-        font-size: 14px;
-        margin: 3px;
+            display: inline-block;
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            border: solid 1px #ccc;
+            transition: 0.25s;
+            padding: 6px 18px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 3px;
         }
-        input[type="checkbox"]:checked + label {
-        background: #00809d;
-        color: #fff;
+        .list-filter input[type="checkbox"]:checked + label {
+            background: #00809d;
+            color: #fff; /* チェックされたときのラベルのスタイル */
         }
-
         .task-list {
-            width: 50%; /* 左側の幅 */
+            width: 50%; /* 中央の列の幅 */
+        }
+        .star-list {
+            width: 25%; /* 右側の列の幅 */
         }
         .btn-group button {
-            height: 40px; /* ボタンの高さを指定 */
+            height: 40px; /* ボタンの高さ */
             padding: 0 15px; /* ボタン内の左右パディング */
-            font-size: 14px; /* フォントサイズを指定 */
+            font-size: 14px; /* フォントサイズ */
             cursor: pointer; /* カーソルをポインタに */
         }
         .button {
             background-color: transparent; /* 背景色は透明 */
             color: #007bff; /* テキストの色 */
-            padding: 10px 20px; /* パディング */
             font-size: 16px; /* フォントサイズ */
             border: none; /* 初期状態でボーダーはなし */
             cursor: pointer; /* カーソルをポインターに */
             border-radius: 100px; /* ボーダーの角を丸くする */
         }
         .btn-group button:not(:last-child) {
-            border-right: 1px solid #007bff; /* 最後のボタン以外の右側に線を追加 */
+            border-right: 1px solid #00cf83; /* 最後のボタン以外の右側に線を追加 */
             padding-right: 10px; /* 線のスペースを確保 */
-            margin-right: 10px; /* ボタン間のスペース */
         }
-        
         .btn-group button:hover {
             background-color: rgba(0, 123, 255, 0.1); /* ホバー時の背景色 */
         }
+        .filter-label {
+            color: #007bff; /* テキストの色 */
 
-        .star-list {
-            width: 40%; /* 右側の幅 */
+        }
+        .starred {
+            color: #007bff;  /* スターが付いている場合の色 */
+        }
+
+        .not-starred {
+            color: #007bff;  /* スターが付いていない場合の色 */
         }
     </style>
+
     <div class='container'>
         <!-- 左側：リスト名とチェックボックス -->
         <div class='list-filter'>
-            <!-- リスト作成へのリンク -->
-            <a href="{%url 'list_create' %}">新しいリストを作成する</a>
+            <a href="{% url 'list_create' %}">新しいリストを作成する</a>
             <h1>タスクリスト</h1>
+            <a href="{% url 'select_list' %}"><h5>リストを選択</h5></a>
 
-                <a href="{%url 'select_list'%}"><h3>リストを選択</h3></a>
+            <form method="post" action="{% url 'task_list' %}">
+                {% csrf_token %}
                 <ul>
                     {% for list in lists %}
                         <li style="display: flex; align-items: center; justify-content: space-between;">
-                            <label>
+                            <input type="checkbox" class="list-checkbox" id="checkbox_{{ list.id }}" value="{{ list.id }}">
+                            <label for="checkbox_{{ list.id }}">
                                 {{ list.name }}
                             </label>
-                            <div class="btn-group" >
+                            <div class="btn-group">
                                 <!-- リスト編集ボタン -->
-                                <!-- リスト削除ボタン　ポップアップ&ダイヤログ -->
+                                <!-- リスト削除ボタン ポップアップ&ダイヤログ -->
                             </div>
                         </li>
-                        {%endfor%}
+                    {% endfor %}
                 </ul>
-                <br>
-                <!--リストソート適用ボタン-->
+                <div class="btn-group">
+                    <!--リストソート適用ボタン-->
+                    <button type="submit" class="button">選択したリストを表示</button>
+                </div>
             </form>
         </div>
-        
-        <script>
-        //list-filter
-        </script>
 
-<!-- ２列目：タスク一覧 -->
-<div class='task-list'>
-                <!-- タスク作成へのリンク -->
-                <a href="{%url 'task_create' %}">タスクを作成する</a>
-                <form method="get">
-                    <label for="filter_name">名前でフィルタリング:</label>
-                    <input type="text" name="filter_name" id="filter_name" placeholder="名前を入力">
-                    <button type="submit">検索</button>
-                </form>
-                <h1>タスク一覧</h1>
+        <!-- ２列目：タスク一覧 -->
+        <div class='task-list'>
+            <a href="{% url 'task_create' %}">タスクを作成する</a>
+            <form method="get">
+                <label for="filter_name" class="filter-label">名前でフィルタリング:</label>
+                <input type="text" name="filter_name" id="filter_name" placeholder="名前を入力">
+                <button type="submit">検索</button>
+            </form>
+            <h1>タスク一覧</h1>
+            {% if lists %}
                 {% for list in lists %}
-                <div class="list-container" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">
-                    <h2>{{ list.name }}</h2> <!-- リスト名を表示 -->
-                    <div class="btn-group"
-                    onmouseover="showBorder(this)"
-                    onmouseout="hideBorder(this)"
-                    >
-                        <!--リスト更新-->
-                        <form action="{% url 'list_update' list.id %}">
-                            {%csrf_token%}
-                            <button type="submit" class="button">更新</button>
-                        </form>
-                        <!--リスト削除-->
-                        <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
-                            {% csrf_token %}
-                            <button type="submit" class="button">削除</button>
-                        </form>
-                    </div>
-                    <ul>
-                        {% for task in list.taskcreate_set.all %}
-                        <li style="display: flex; align-items: center; justify-content: space-between;">
-                            <span>
-                                {{ task.title }} - {{ task.due_date }} - {{ task.user.username }} <!-- 表示項目 -->
-                            </span>
-                            <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
-                            {% csrf_token %}
-                            <button type="submit">
-                                {% if task.is_starred %}
-                                ★  <!-- スターが付いている場合 -->
-                                {% else %}
-                                ☆  <!-- スターが付いていない場合 -->
-                                {% endif %}
-                            </button>
-                        <div class='btn-group'>
-                        </form>
-                            <!-- タスク編集ボタン -->
-                            <form action="{% url 'task_update' list.id %}" method="get">
-                                <button type="submit" class="btn btn-success">更新</button>
-                            </form>
-                            
-                            <!-- タスク削除ボタン　ポップアップ&ダイヤログ -->
-                            <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDeleteTask();" class="d-inline">
+                    <div class="list-container" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">
+                        <h2>{{ list.name }}</h2> <!-- リスト名を表示 -->
+                        <div class="btn-group">
+                            <!--リスト更新-->
+                            <form action="{% url 'list_update' list.id %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">削除</button>
+                                <button type="submit" class="button">更新</button>
+                            </form>
+                            <!--リスト削除-->
+                            <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
+                                {% csrf_token %}
+                                <button type="submit" class="button">削除</button>
                             </form>
                         </div>
-                        </li>
-                    {% empty %}
-                    <li>タスクはまだ追加されていません。</li>
-                    {% endfor %}
-                    </ul>
-                </div>
-            {%endfor%}
+                        <ul class="Sortable" data-list-id="{{list.id}}" id="list_{{list.id}}">
+                            {% for task in list.taskcreate_set.all %}
+                                <li style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>
+                                        {{ task.title }} - {{ task.due_date }} - {{ task.user.username }} <!-- 表示項目 -->
+                                    </span>
+                                    <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
+                                        {% csrf_token %}
+                                        <div class='btn-group'>
+                                            <button type="submit">
+                                                <span class="{% if task.is_starred %}starred{% else %}not-starred{% endif %}">
+                                            {% if task.is_starred %}
+                                            ★  <!-- スターが付いている場合 -->
+                                            {% else %}
+                                            ☆  <!-- スターが付いていない場合 -->
+                                            {% endif %}
+                                            </span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div >
+                                            <!-- タスク編集ボタン -->
+                                            <form action="{% url 'task_update' list.id %}" method="get">
+                                            <button type="submit" class="btn btn-success">更新</button>
+                                        </form>
+                                        <!-- タスク削除ボタン ポップアップ&ダイヤログ -->
+                                        <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDeleteTask();" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">削除</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% empty %}
+                            <li>タスクはまだ追加されていません。</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            {% elif message %}
+                <script>
+                    alert('{{ message }}')
+                    alert('もう一度検索ボタンをクリックすると一覧表示へ戻ります。')
+
+                </script>
+            {% endif %}
             <script>
-                //task-list
-                //タスク削除
+                // タスク削除
                 function confirmDeleteTask() {
                     return confirm("本当に削除しますか？");
                 }
-                //リスト削除
+                // リスト削除
                 function confirmDeleteList() {
                     return confirm("このリストを削除しますか？ このリスト上のすべてのタスクが完全に削除されます。");
                 }
-                function showBorder(element) {
-                    element.style.border = "2px solid #007bff"; // ホバー時の枠線の色
-                }
-                
                 function hideBorder(element) {
                     element.style.border = "none"; // 元の枠線の色
+                    element.style.boxShadow = 'none'; // 影を削除
                 }
-                //star-list
+                function showBorder(element) {
+                    const allContainers = document.querySelectorAll('.list-container','.Sortable');
+                    allContainers.forEach(container => {
+                        container.style.border = 'none'; // すべてのボーダーを削除
+                    });
+
+                    // 選択された要素にボーダーを追加
+                    element.style.boxShadow = "0 2px 5px rgba(0, 123, 255, 0.5)"; // 青色の影を追加
+                }
             </script>
         </div>
 
         <!-- 右側：スター付きタスクのみを表示 -->
-         <div class="star-list">
-             <h1>★スター付き</h1>
-             <ul>
-                 {% for task in tasks %}
+        <div class="star-list">
+            <h1>★スター付き</h1>
+            <ul>
+                {% for task in tasks %}
                     {% if task.is_starred %}
                     <li>
                         {{ task.title }} - {{ task.user.username }} - {{ task.list.name }}
                     </li>
-                    {%endif%}
+                    {% endif %}
                 {% empty %}
-                    <li>スター付きタスクはありません。</li>
+                <li>スター付きタスクはありません。</li>
                 {% endfor %}
             </ul>
         </div>
+    </div>
 {% endblock %}
