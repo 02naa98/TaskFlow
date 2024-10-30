@@ -1,13 +1,16 @@
-from typing import Any
 from django.db.models.query import QuerySet
+from datetime import datetime
 from django.urls import reverse_lazy
 from django.views.generic import CreateView,ListView,UpdateView,DeleteView
 from django.views.generic.edit import FormView
-from django.views import View
+from django.views import View,generic
 from django.shortcuts import redirect,render,get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
+from django.template import loader
 from .models import TaskCreate,TaskList
 from .forms import TaskForm,ListForm,ListSelectForm
+from django.utils.safestring import mark_safe
+
 
 #簡易チェックリスト
 class ListSelectView(FormView):
@@ -18,6 +21,13 @@ class ListSelectView(FormView):
     def form_valid(self, form):
         return super().form_valid(form)  # フォームが正常に送信された場合はリダイレクト
 
+#FullCalendar 使えなさそう
+def index(request):
+    """
+    カレンダー画面
+    """
+    template = loader.get_template("todo_app/calendar.html")
+    return HttpResponse(template.render())
 
 #タスク一覧表示
 class TaskListView(ListView):
