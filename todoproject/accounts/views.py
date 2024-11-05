@@ -20,8 +20,8 @@ class SignupView(CreateView):
         return redirect(self.success_url)
 
 # ログインビュー
-class CustomLoginView(LoginView):
-    template_name = 'registration/login.html'
+    class CustomLoginView(LoginView):
+        template_name = 'registration/login.html'
 
-    next_page = reverse_lazy('login')  # ログアウト後にリダイレクトするページ
+        next_page = reverse_lazy('login')  # ログアウト後にリダイレクトするページ
 

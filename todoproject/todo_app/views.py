@@ -1,7 +1,7 @@
 from django.db.models.query import QuerySet
 from datetime import datetime
 from django.urls import reverse_lazy
-from django.views.generic import CreateView,ListView,UpdateView,DeleteView
+from django.views.generic import CreateView,ListView,UpdateView,DeleteView,DetailView
 from django.views.generic.edit import FormView
 from django.views import View,generic
 from django.shortcuts import redirect,render,get_object_or_404
@@ -10,7 +10,22 @@ from django.template import loader
 from .models import TaskCreate,TaskList
 from .forms import TaskForm,ListForm,ListSelectForm
 from django.utils.safestring import mark_safe
+from accounts.models import CustomUser
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+#プロフィールページ
+class ProfileView(DetailView,LoginRequiredMixin):
+    model = CustomUser
+    template_name = 'todo_app/profile.html'
+    context_object_name = 'profile_user'
+    slug_field = 'username'  # usernameフィールドをスラグとして使用
+    slug_url_kwarg = 'username'  # URLから渡されるパラメータ名
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # セキュリティのため、パスワードを直接渡すのではなく、別の方法を考えることを推奨します。
+        context['password'] = 'YourPassword'  # これは実際の実装では避けるべきです。
+        return context
 
 #簡易チェックリスト
 class ListSelectView(FormView):

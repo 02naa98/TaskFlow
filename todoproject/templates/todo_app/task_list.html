@@ -35,8 +35,14 @@
             background: #00809d;
             color: #fff; /* チェックされたときのラベルのスタイル */
         }
+        .list-create:hover {
+            background-color: #e0e0e0; /* ホバー時の背景色を少し暗く */
+        }
         .task-list {
             width: 50%; /* 中央の列の幅 */
+        }
+        .task-create:hover {
+            background-color: #e0e0e0; /* ホバー時の背景色を少し暗く */
         }
         .star-list {
             width: 25%; /* 右側の列の幅 */
@@ -75,12 +81,12 @@
         }
     </style>
 
-    <div class='container'>
-        <!-- 左側：リスト名とチェックボックス -->
+<div class='container'>
+    <!-- 左側：リスト名とチェックボックス -->
         <div class='list-filter'>
-            <a href="{% url 'list_create' %}">新しいリストを作成する</a>
+            <a class="list-create" href="{% url 'list_create' %}">新しいリストを作成する</a>
             <h1>タスクリスト</h1>
-            <a href="{% url 'select_list' %}"><h5>リストを選択</h5></a>
+            <a href="{% url 'select_list' %}"><h5>リストフォーム(仮)</h5></a>
 
             <form method="post" action="{% url 'task_list' %}">
                 {% csrf_token %}
@@ -103,11 +109,12 @@
                     <button type="submit" class="button">選択したリストを表示</button>
                 </div>
             </form>
+            <a href="{%url 'only_calendar'%}">カレンダー</a>
         </div>
 
         <!-- ２列目：タスク一覧 -->
         <div class='task-list'>
-            <a href="{% url 'task_create' %}">タスクを作成する</a>
+            <a class="task-create" href="{% url 'task_create' %}">タスクを作成する</a>
             <form method="get">
                 <label for="filter_name" class="filter-label">名前でフィルタリング:</label>
                 <input type="text" name="filter_name" id="filter_name" placeholder="名前を入力">

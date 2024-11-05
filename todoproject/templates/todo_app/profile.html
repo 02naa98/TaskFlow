@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+<title>{%block title%}Profile{%endblock%}</title>
+
+{% block content %}
+<div class="profile-container">
+    <h1>Profile</h1>
+    <p class="username">
+        username:{{profile_user.username}}
+    </p>
+    <div class="password-container">
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="YourPassword" disabled>
+        <button type="button" onclick="togglePassword()">Show</button>
+    </div>
+</div>
+<p>
+    <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
+</p>
+
+<style>
+.profile-container {
+    border: solid 2px #ccc;
+    padding: 20px;
+    background-color: #f9f9f9; /* Profile枠の背景色 */
+    width: 300px; /* Optional: 枠の幅を指定 */
+}
+
+/* usernameの小さな枠 */
+.username {
+    border: solid 2px #999; /* 境界線を少し太く */
+    padding: 15px; /* パディングを増やして余裕を持たせる */
+    background-color: #f0f0f0; /* 明るい背景色に変更 */
+    color: #333; /* テキストカラーを濃く */
+    font-size: 16px; /* フォントサイズを大きく */
+    border-radius: 5px; /* 角を丸くする */
+    display: inline-block; /* インラインブロックを維持 */
+    margin-top: 15px; /* 上部にスペースを追加 */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 軽い影を追加して立体感を出す */
+    transition: background-color 0.3s; /* ホバー時のスムーズな背景色の変更を追加 */
+}
+
+.username:hover {
+    background-color: #e0e0e0; /* ホバー時の背景色を少し暗く */
+}
+.password-container {
+    margin-top: 20px; /* usernameとパスワード枠の間にスペースを追加 */
+}
+
+.password-container input {
+    padding: 5px;
+    border: solid 1px #ccc;
+    border-radius: 4px; /* 角を丸める */
+    margin-right: 10px; /* ボタンと入力フィールドの間にスペースを追加 */
+}
+
+.password-container button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #007bff; /* ボタンの背景色 */
+    color: white; /* ボタンのテキスト色 */
+    border-radius: 4px; /* 角を丸める */
+    cursor: pointer; /* マウスカーソルをポインタに変更 */
+}
+
+.password-container button:hover {
+    background-color: #0056b3; /* ホバー時の背景色 */
+}
+</style>
+
+<script>
+    function togglePassword() {
+        var passwordField = document.getElementById("password");
+        var button = document.querySelector('.password-container button');
+        if (passwordField.type === "password") {
+            passwordField.type = "text"; // パスワードを表示
+            button.textContent = "Hide"; // ボタンのテキストを変更
+        } else {
+            passwordField.type = "password"; // パスワードを隠す
+            button.textContent = "Show"; // ボタンのテキストを変更
+        }
+    }
+</script>
+
+{% endblock %}

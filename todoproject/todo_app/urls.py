@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TaskCreateView,TaskListView,TaskUpdateView,TaskDeleteView,ListCreateView,ListUpdateView,ListDeleteView,ListSelectView,ToggleStarView
+from .views import TaskCreateView,TaskListView,TaskUpdateView,TaskDeleteView,ListCreateView,ListUpdateView,ListDeleteView,ListSelectView,ToggleStarView,ProfileView
 from . import views
 
 urlpatterns = [
@@ -11,7 +11,8 @@ urlpatterns = [
     path('list/update/<int:pk>/', ListUpdateView.as_view(), name='list_update'), #リスト更新
     path('list/delete/<int:pk>/', ListDeleteView.as_view(), name='list_delete'), #リスト削除
     path('select-list/', ListSelectView.as_view(), name='select_list'),#リスト選択
-    path('calendar/', views.index, name='select_list'),#カレンダー
+    path('calendar/', views.index, name='only_calendar'),#カレンダー
+    path('profile/<str:username>/', ProfileView.as_view(), name='temporary_profile'),#プロフィール
     #動的url(ページ遷移が小さい)
     path('tasks/toggle_star/<int:task_id>/', ToggleStarView.as_view(), name='toggle_star'), #スタートグル
 
