@@ -41,11 +41,5 @@ Git/GitHub
 <p>- 自動分類(仮)</p>
 
 <h2>設計</h2>
-デザイン
-figmaで公開してます。 <br>
-イメージ→ https://www.figma.com/file/Bk9Aq67HIaT26ymqCPmyHY/Cafe%E6%B4%BB?node-id=0%3A1&t=hjiQBFtEGHHDeVjM-1
-
-
-
 ER図
 draw.ioを用いて作図しました。 
