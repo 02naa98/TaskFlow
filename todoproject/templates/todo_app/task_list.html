@@ -204,6 +204,14 @@
                     // 選択された要素にボーダーを追加
                     element.style.boxShadow = "0 2px 5px rgba(0, 123, 255, 0.5)"; // 青色の影を追加
                 }
+                // セッションストレージからメッセージを取得
+                const message = sessionStorage.getItem('message');
+
+                // メッセージが存在する場合、アラートを表示
+                if (message) {
+                    alert(message);
+                    sessionStorage.removeItem('message'); // メッセージを表示後に削除
+                }
             </script>
         </div>
 
