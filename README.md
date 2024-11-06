@@ -11,8 +11,8 @@ URL
 
 ![レコーディング-2024-11-05-200602](https://github.com/user-attachments/assets/c8e0f9a8-e314-4c83-be7c-9f45cbdcec23)
 
-カフェ検索、レビュー投稿
-https://raw.github.com/wiki/akane-05/cafekatu/cafefunc.gif
+<h3>質問機能とスター</h3>
+https://github.com/user-attachments/assets/273bcd60-95a3-49f9-a0df-cbb0fe3c5f53
 
 
 <br>
