@@ -12,7 +12,6 @@ URL
 ![レコーディング-2024-11-05-200602](https://github.com/user-attachments/assets/c8e0f9a8-e314-4c83-be7c-9f45cbdcec23)
 
 <h3>質問機能とスター</h3>
-https://github.com/user-attachments/assets/273bcd60-95a3-49f9-a0df-cbb0fe3c5f53
 
 ![レコーディング-2024-11-06-195322](https://github.com/user-attachments/assets/bc926bb1-eee7-4105-b200-3893f92b73c5)
 
