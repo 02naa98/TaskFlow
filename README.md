@@ -13,7 +13,7 @@ URL
 
 <h3>質問機能とスター</h3>
 
-![レコーディング-2024-11-06-195322](https://github.com/user-attachments/assets/bc926bb1-eee7-4105-b200-3893f92b73c5)
+![レコーディング-2024-11-06-195322](https://github.com/user-attachments/assets/172eac32-81c1-4449-97e0-247e8a63dd7f)
 
 
 <br>
