@@ -4,13 +4,22 @@
 <title>{%block title%}TaskUpdate{%endblock%}</title>
 
 {% block content %}
-    <h1>タスクを上書きする</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">上書き</button>
-    </form>
-    <p>
-        <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
-    </p>
+<h1>タスクを上書きする</h1>
+
+<!-- タスク上書きフォーム -->
+<form method="post">
+    {% csrf_token %}
+
+    <!-- フォームフィールドを表示 -->
+    {{ form.as_p }}
+
+    <!-- 上書きボタン -->
+    <button type="submit">上書き</button>
+</form>
+
+<!-- タスク一覧に戻るリンク -->
+<p>
+    <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
+</p>
+
 {% endblock %}

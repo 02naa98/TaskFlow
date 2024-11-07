@@ -4,12 +4,20 @@
 <title>{%block title%}ListUpdate{%endblock%}</title>
 
 {% block content %}
+    <!-- フォームの開始 -->
     <form method="post">
         {% csrf_token %}
+        
+        <!-- フォームフィールドを表示 -->
         {{ form.as_p }}
+        
+        <!-- 更新ボタン -->
         <button type="submit">更新</button>
     </form>
+
+    <!-- タスク一覧へのリンク -->
     <p>
         <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
     </p>
-{%endblock%}
+{% endblock %}
+

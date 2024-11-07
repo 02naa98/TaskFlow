@@ -13,10 +13,10 @@ class TaskCreate(models.Model):
     title=models.CharField(max_length=20) #タスクのタイトル
     description=models.TextField(null=True,blank=True) #説明
     due_date=models.DateTimeField(default=timezone.now) #期日
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) #作成したユーザー
 
     is_starred=models.BooleanField(default=False) #スターの状態
 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) #作成したユーザー
     list=models.ForeignKey(TaskList,on_delete=models.CASCADE,default=1) #リストモデルとの関係
 
     def __str__(self):

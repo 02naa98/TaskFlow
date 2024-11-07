@@ -7,50 +7,76 @@
     <script>
         const taskListUrl = "{% url 'task_list' %}";
     </script>
-    <h1>タスクを作成する</h1>
-    <!--Java１　トリガー-->
+<h1>タスクを作成する</h1>
+
+    <!-- タスク作成フォーム -->
     <form id="taskForm" action="{% url 'task_create' %}" method="post" onsubmit="return false;">
-        {%csrf_token%}
-        {{ form.as_p }}  <!-- フォームを表示 -->
-        <button type="submit" onclick="showPrompt()">作成</button>
+        {% csrf_token %}
+
+        <!-- フォームフィールドを表示 -->
+        {{ form.as_p }}
+
+        <!-- 作成ボタン -->
+        <button type="submit" class="btn btn-primary" onclick="showPrompt()">作成</button>
     </form>
+
+    <!-- タスク一覧に戻るリンク -->
     <p>
         <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
     </p>
 
 
+
     <script>
+        //yes,no以外の入力時　未実装
+        function askQuestion(question) {
+            let answer;
+            do {
+                answer = prompt(question).toLowerCase(); // 入力を小文字に変換してチェック
+                if (answer !== "yes" && answer !== "no") {
+                    alert("無効な入力です。'yes' または 'no' で入力してください。");
+                }
+            } while (answer !== "yes" && answer !== "no"); // 'yes' または 'no' が入力されるまで繰り返す
+            return answer;
+        }
+        
         function showPrompt() {
-            const answer = prompt("タスクに対して質問を受け付けますか？ (yes/no)")
+            const answer = askQuestion("タスクに対して質問を受け付けますか？ (yes/no)")
 
             if (answer ==="no") {
-                const projectListId ="16"
+                const message = 'デフォルトリストに保存されました。'
+                const projectListId ="16" //理想は"1"に入れたい　「デフォルトリスト」
+                sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                 document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                 document.getElementById('taskForm').submit(); // フォームを送信
             } else if (answer ==="yes") {
-                alert('具体的な行動まで落とし込めているかを聞かれています。');
-                const answer1 = prompt("実行可能か？ (yes/no)"); // 1問目
+                const answer1 = askQuestion("具体的な行動まで落とし込めているか。\n実行可能か？ (yes/no)"); // 1問目
     
                 if (answer1 === "yes") {
-                    const answer2 = prompt("test question2？ (yes/no)"); // 2問目
+                    const answer2 = askQuestion("1回で終わるタスク？ (yes/no)"); // 2問目
     
                     if (answer2 === "yes") {
-                        const answer3 = prompt("それを2分でできますか？ (yes/no)"); // 3問目
+                        const answer3 = askQuestion("それを2分でできますか？ (yes/no)"); // 3問目
     
                         if (answer3 === "yes") {
-                            alert('今すぐやりましょう');
-                            const projectListId = "12"
+                            const message = "今すぐ実行しましょう。\nDo it.に保存されました。";
+                            const projectListId = "12" //「Do it.」
+                            sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                             document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                             document.getElementById('taskForm').submit(); // フォームを送信
                         } else if (answer3 === "no") {
                             window.location.href = taskListUrl; // 一覧ページにリダイレクト
                         }
                     } else if (answer2 === "no") {
-                        const projectListId = "11"
+                        const projectListId = "11" //「PROJECT」
+                        const message = 'PROJECTに保存されました。'
+                        sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                         document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                         document.getElementById('taskForm').submit(); // フォームを送信
                     }
                 } else if (answer1 === "no") {
+                    const message = "タスクを細分化してましょう。\nタスクの作成はキャンセルされました。";
+                    sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                     window.location.href = taskListUrl; // 一覧ページにリダイレクト
                 }
             }
