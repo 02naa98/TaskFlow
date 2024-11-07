@@ -106,7 +106,7 @@
 
                                 <div>
                                     <!-- タスク更新ボタン -->
-                                    <form action="{% url 'task_update' list.id %}" method="get">
+                                    <form action="{% url 'task_update' task.id %}" method="get">
                                         <button type="submit" class="btn btn-success">更新</button>
                                     </form>
                                     <!-- タスク削除ボタン -->

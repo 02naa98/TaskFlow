@@ -131,7 +131,7 @@ class TaskUpdateView(UpdateView):
         pk = self.kwargs.get('pk')
         if pk is None:
             raise ValueError("pkが定義されていません")
-        print(f"Requested task ID: {self.kwargs.get('pk')}")
+        print(f"Requested task ID: {pk}")
 
         obj = super().get_object(queryset)
         print(obj)  # デバッグ用にタスクオブジェクトを表示
