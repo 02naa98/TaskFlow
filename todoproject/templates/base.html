@@ -5,85 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{%block title%}あ{%endblock%}</title>
+
+    <link rel="stylesheet" href="{%static 'css/style.css'%}">
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <!--ここは共通のレイアウトをまとめるhtml-->
 <body>
-    <style>
-    .header {
-    display: flex;
-    align-items: center;
-    }
-
-    .header h1 {
-        margin: 0;
-        font-size: 40px; /* h1のフォントサイズ */
-        margin-left: 7px; /* テキストと画像の間に空白を追加 */
-        margin-right: 7px; /* テキストと詳細の間に空白を追加 */
-    }
-
-    .header img {
-        height: 40px; /* h1のフォントサイズと合わせる */
-        width: auto;  /* 縦横比を保持 */
-        vertical-align: middle;
-    }
-
-    /* モーダルのスタイル */
-    .modal {
-        display: none; /* デフォルトで非表示 */
-        position: fixed; /* 固定表示 */
-        z-index: 1; /* 上に表示 */
-        padding-top: 100px; /* 上に余白 */
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto; /* スクロール可能 */
-        background-color: rgba(0, 0, 0, 0.8); /* 背景を少し暗く */
-    }
-
-    .modal-content {
-        margin: auto;
-        display: block;
-        width: 80%; /* モーダルの画像の幅 */
-        max-width: 700px; /* 最大幅 */
-    }
-
-    #caption {
-        text-align: center;
-        color: #fff;
-        padding: 10px;
-    }
-
-    /* 閉じるボタン */
-    .close {
-        position: absolute;
-        top: 15px;
-        right: 35px;
-        color: #fff;
-        font-size: 40px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: #bbb;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .description {
-        font-size: 16px;
-        line-height: 1.6;
-        margin-top: 0;
-        margin-bottom: 0;   /* pタグの下の余白をなくす */
-        padding-top: 5px;   /* 上に少し余白を追加 */
-    }
-
-    </style>
-
     <div class="header">
         <a href="javascript:void(0);" onclick="openModal();"></a>
             <img src="{% static 'images/logo - コピー.png' %}" alt="Sample Logo" class="clickable-image" id="image-1">

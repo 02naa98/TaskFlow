@@ -9,11 +9,15 @@
     <h2>リスト作成</h2>
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}  <!-- フォームを表示 -->
+
+      <!-- フォームの表示 -->
+      {{ form.as_p }}
+
       <button type="submit" class="btn btn-primary">作成</button>
     </form>
+
     <p>
       <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
-  </p>
+    </p>
   </div>
 {% endblock %}

@@ -13,6 +13,11 @@ from django.utils.safestring import mark_safe
 from accounts.models import CustomUser
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+#css適用テストview
+def display_a(request):
+    return render(request,'todo_app/display_a.html')
+
+
 #プロフィールページ
 class ProfileView(DetailView,LoginRequiredMixin):
     model = CustomUser

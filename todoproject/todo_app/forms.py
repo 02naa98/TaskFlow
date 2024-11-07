@@ -7,6 +7,11 @@ class ListForm(forms.ModelForm):
         model=TaskList
         fields=['name'] #リストの名前を入力　
 
+        #見た目
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'タスクのタイトルを入力'}),
+        }
+
 class ListSelectForm(forms.Form):
     lists=forms.ModelMultipleChoiceField(  # ModelChoiceFieldではなくModelMultipleChoiceFieldを使用
         label='リスト選択',
