@@ -9,7 +9,7 @@ URL
 
 <h3>ユーザー機能(ログイン、ログアウト、新規会員登録、プロフィール)</h3>
 
-![レコーディング-2024-11-05-200602](https://github.com/user-attachments/assets/c8e0f9a8-e314-4c83-be7c-9f45cbdcec23)
+![レコーディング-2024-11-05-200602_out](https://github.com/user-attachments/assets/72d348aa-a2f5-4916-8e70-57474814e5b4)
 
 <h3>質問機能とスター</h3>
 
