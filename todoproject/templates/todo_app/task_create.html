@@ -1,16 +1,16 @@
 <!-- templates/todo_app/task_create.html -->
 {% extends 'base.html' %}
 
-<title>{%block title%}TaskCreate{%endblock%}</title>
+<title>{% block title %}TaskCreate{% endblock %}</title>
 
 {% block content %}
     <script>
         const taskListUrl = "{% url 'task_list' %}";
     </script>
-<h1>タスクを作成する</h1>
+    <h1>タスクを作成する</h1>
 
     <!-- タスク作成フォーム -->
-    <form id="taskForm" action="{% url 'task_create' %}" method="post" onsubmit="return false;">
+    <form id="taskForm" action="{% url 'task_create' %}?list_id={{ list_id }}" method="post" onsubmit="return false;">
         {% csrf_token %}
 
         <!-- フォームフィールドを表示 -->
@@ -25,8 +25,6 @@
         <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
     </p>
 
-
-
     <script>
         //yes,no以外の入力時　未実装
         function askQuestion(question) {
@@ -39,28 +37,28 @@
             } while (answer !== "yes" && answer !== "no"); // 'yes' または 'no' が入力されるまで繰り返す
             return answer;
         }
-        
-        function showPrompt() {
-            const answer = askQuestion("タスクに対して質問を受け付けますか？ (yes/no)")
 
-            if (answer ==="no") {
-                const message = 'デフォルトリストに保存されました。'
-                const projectListId ="16" //理想は"1"に入れたい　「デフォルトリスト」
+        function showPrompt() {
+            const answer = askQuestion("タスクに対して質問を受け付けますか？ (yes/no)");
+
+            if (answer === "no") {
+                const message = 'デフォルトリストに保存されました。';
+                const projectListId = "16"; //理想は"1"に入れたい　「デフォルトリスト」
                 sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                 document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                 document.getElementById('taskForm').submit(); // フォームを送信
-            } else if (answer ==="yes") {
+            } else if (answer === "yes") {
                 const answer1 = askQuestion("具体的な行動まで落とし込めているか。\n実行可能か？ (yes/no)"); // 1問目
-    
+
                 if (answer1 === "yes") {
                     const answer2 = askQuestion("1回で終わるタスク？ (yes/no)"); // 2問目
-    
+
                     if (answer2 === "yes") {
                         const answer3 = askQuestion("それを2分でできますか？ (yes/no)"); // 3問目
-    
+
                         if (answer3 === "yes") {
                             const message = "今すぐ実行しましょう。\nDo it.に保存されました。";
-                            const projectListId = "12" //「Do it.」
+                            const projectListId = "12"; //「Do it.」
                             sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                             document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                             document.getElementById('taskForm').submit(); // フォームを送信
@@ -68,8 +66,8 @@
                             window.location.href = taskListUrl; // 一覧ページにリダイレクト
                         }
                     } else if (answer2 === "no") {
-                        const projectListId = "11" //「PROJECT」
-                        const message = 'PROJECTに保存されました。'
+                        const projectListId = "11"; //「PROJECT」
+                        const message = 'PROJECTに保存されました。';
                         sessionStorage.setItem('message', message); // セッションストレージにメッセージを保存
                         document.getElementById('taskForm').action = "{% url 'task_create' %}?list_id=" + projectListId;
                         document.getElementById('taskForm').submit(); // フォームを送信
@@ -80,7 +78,7 @@
                     window.location.href = taskListUrl; // 一覧ページにリダイレクト
                 }
             }
-
         }
     </script>
+
 {% endblock %}

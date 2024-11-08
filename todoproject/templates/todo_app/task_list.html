@@ -106,7 +106,7 @@
 
                                 <div>
                                     <!-- タスク更新ボタン -->
-                                    <form action="{% url 'task_update' list.id %}" method="get">
+                                    <form action="{% url 'task_update' task.id %}" method="get">
                                         <button type="submit" class="btn btn-success">更新</button>
                                     </form>
                                     <!-- タスク削除ボタン -->
@@ -130,43 +130,7 @@
             </script>
         {% endif %}
         
-        <script>
-            // タスク削除確認
-            function confirmDeleteTask() {
-                return confirm("本当に削除しますか？");
-            }
-            
-            // リスト削除確認
-            function confirmDeleteList() {
-                return confirm("このリストを削除しますか？ このリスト上のすべてのタスクが完全に削除されます。");
-            }
-
-            // マウスオーバー時にボーダーを表示
-            function showBorder(element) {
-                const allContainers = document.querySelectorAll('.list-container','.Sortable');
-                allContainers.forEach(container => {
-                    container.style.border = 'none'; // すべてのボーダーを削除
-                });
-
-                // 選択された要素にボーダーを追加
-                element.style.boxShadow = "0 2px 5px rgba(0, 123, 255, 0.5)"; // 青色の影を追加
-            }
-
-            // マウスアウト時にボーダーを非表示
-            function hideBorder(element) {
-                element.style.border = "none"; // 元の枠線の色
-                element.style.boxShadow = 'none'; // 影を削除
-            }
-
-            // セッションストレージからメッセージを取得
-            const message = sessionStorage.getItem('message');
-
-            // メッセージが存在する場合、アラートを表示
-            if (message) {
-                alert(message);
-                sessionStorage.removeItem('message'); // メッセージを表示後に削除
-            }
-        </script>
+        
     </div>
 
     <!-- 右側：スター付きタスクのみを表示 -->
@@ -185,5 +149,6 @@
         </ul>
     </div>
 </div>
+
 {% endblock %}
 
