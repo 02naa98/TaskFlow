@@ -29,20 +29,3 @@
     <a href="{% url 'task_list' %}">タスク一覧に戻る</a>
   </p>
 {% endblock %}
-
-
-<script>
-    function togglePassword() {
-        var passwordField = document.getElementById("password");
-        var button = document.querySelector('.password-container button');
-        if (passwordField.type === "password") {
-            passwordField.type = "text"; // パスワードを表示
-            button.textContent = "Hide"; // ボタンのテキストを変更
-        } else {
-            passwordField.type = "password"; // パスワードを隠す
-            button.textContent = "Show"; // ボタンのテキストを変更
-        }
-    }
-</script>
-
-{% endblock %}

@@ -59,31 +59,7 @@
         <p>&copy; 2024 TaskFlow</p>
     </footer>
 
-    <script>
-        // モーダル関連の要素
-        var modal = document.getElementById("imageModal");
-        var modalImg = document.getElementById("modalImage");
-        var captionText = document.getElementById("caption");
-        var closeModal = document.getElementById("closeModal");
+    <script src="{% static 'js/script.js'%}"></script>
 
-        // 画像をクリックしたときにモーダルを表示
-        document.getElementById("image-1").onclick = function(){
-            modal.style.display = "block";
-            modalImg.src = this.src;  // クリックした画像のsrcをモーダル内に表示
-            captionText.innerHTML = this.alt;  // 画像のaltテキストをキャプションとして表示
-        }
-
-        // モーダルを閉じる
-        closeModal.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // モーダルの外をクリックした場合にも閉じる
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
 </body>
 </html>
