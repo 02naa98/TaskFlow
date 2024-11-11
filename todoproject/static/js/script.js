@@ -88,6 +88,9 @@ function hideBorder(element) {
     element.style.boxShadow = 'none'; // 影を削除
 }
 
+
+                                        //task_list.html//
+                                        //task_create.html//
 // セッションストレージからメッセージを取得
 const message = sessionStorage.getItem('message');
 
@@ -96,7 +99,4 @@ if (message) {
     alert(message);
     sessionStorage.removeItem('message'); // メッセージを表示後に削除
 }
-                                        //task_list.html//
-                                        //task_create.html//
-
                                         //task_create.html//
