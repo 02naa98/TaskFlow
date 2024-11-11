@@ -24,13 +24,9 @@
                     <!-- リスト項目 -->
                     <li style="display: flex; align-items: center; justify-content: space-between;">
                         <!-- チェックボックス -->
-                        <input type="checkbox" class="list-checkbox" id="checkbox_{{ list.id }}" value="{{ list.id }}">
-                        <label for="checkbox_{{ list.id }}">
-                            {{ list.name }}
-                        </label>
+                        <input type="checkbox" class="list-checkbox" id="checkbox_{{ list.id }}" name="list-checkbox" value="{{ list.id }}">
+                        <label for="checkbox_{{ list.id }}">{{ list.name }}</label>
                         <div class="btn-group">
-                            <!-- リスト編集ボタン（未実装） -->
-                            <!-- リスト削除ボタン ポップアップ＆ダイアログ（未実装） -->
                         </div>
                     </li>
                 {% endfor %}
@@ -56,6 +52,10 @@
             <input type="text" name="filter_name" id="filter_name" placeholder="名前を入力">
             <button type="submit">検索</button>
         </form>
+        <!--フィルタリング結果メッセージ-->
+        {% if filter_message %}
+            <p>{{ filter_message }}</p>
+        {% endif %}
         
         <h1>タスク一覧</h1>
         
