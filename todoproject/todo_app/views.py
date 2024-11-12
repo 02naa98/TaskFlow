@@ -1,17 +1,21 @@
-from django.db.models.query import QuerySet
 from datetime import datetime
-from django.urls import reverse_lazy,reverse
+
+from django.urls import reverse_lazy, reverse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render, get_object_or_404
+from django.template import loader
+from django.contrib import messages
+from django.utils.safestring import mark_safe
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.views.generic.edit import FormView
 from django.views import View, generic
-from django.shortcuts import redirect, render, get_object_or_404
-from django.http import JsonResponse, HttpResponse,HttpResponseRedirect
-from django.template import loader
+
 from .models import TaskCreate, TaskList
 from .forms import TaskForm, ListForm, ListSelectForm
-from django.utils.safestring import mark_safe
 from accounts.models import CustomUser
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.query import QuerySet
 
 # 基本ビュー
 # ==========================
@@ -96,6 +100,7 @@ class TaskListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         filter_name = self.request.GET.get('filter_name', '')
+        
         if filter_name:
              # 部分一致でフィルタリングされたリストを取得
             context['lists'] = TaskList.objects.filter(name__icontains=filter_name)
@@ -158,8 +163,19 @@ class TaskCreateView(CreateView):
 class ToggleStarView(View):
     def post(self, request, task_id):
         task = get_object_or_404(TaskCreate, id=task_id)
-        task.is_starred = not task.is_starred  # スターの状態を反転
+        # タスクのスター状態を反転
+        task.is_starred = not task.is_starred
         task.save()  # タスクを保存
+        
+        # すべてのタスクを確認し、is_starred=Trueのタスクが1つでも存在するか確認
+        starred_tasks_exist = TaskCreate.objects.filter(is_starred=True).exists()
+
+        # スター付きタスクだけを表示
+        if self.request.POST.get('filter_starred') == 'true':
+            queryset = queryset.filter(is_starred=True)
+        # スター付きタスクが1つもない場合にエラーメッセージを表示
+        if not starred_tasks_exist:
+            messages.error(request, "スター付きタスクはありません。")
         return redirect('task_list')
 
 # タスクのUpdate

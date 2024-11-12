@@ -17,7 +17,7 @@
         <a href="{% url 'select_list' %}"><h5>リストフォーム(仮)</h5></a>
 
         <!-- チェックボックス付きリスト選択フォーム -->
-        <form method="post" action="{% url 'task_list' %}">
+        <form method="post" action="{% url 'task_list' %}" id="listFilterForm">
             {% csrf_token %}
             <ul>
                 {% for list in lists %}
@@ -142,22 +142,27 @@
         <p>リストが選択されていません。</p>
     {% endif %}
 
-        
-        
     </div>
+        
 
     <!-- 右側：スター付きタスクのみを表示 -->
     <div class="star-list">
         <h1>★スター付き</h1>
         <ul>
+            <!--スターなしの場合　エラーメッセージ-->
+            {% if not has_starred_tasks %}
+                {% for message in messages %}
+                    <li class="error">{{ message }}</li>
+                {% endfor %}
+            {% endif %}
+                
+            <!--スターありの場合-->
             {% for task in tasks %}
                 {% if task.is_starred %}
                     <li>
                         {{ task.title }} - {{ task.user.username }} - {{ task.list.name }}
                     </li>
                 {% endif %}
-            {% empty %}
-                <li>スター付きタスクはありません。</li>
             {% endfor %}
         </ul>
     </div>
