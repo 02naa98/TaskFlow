@@ -102,7 +102,16 @@ class TaskListView(ListView):
             # フィルタリングされたメッセージを作成
             context['filter_message'] = f"検索結果: 名前に 「{filter_name}」 を含むリスト"
         else:
-            context['lists'] = TaskList.objects.all()
+            # POSTリクエストで選択されたリストがある場合
+            selected_lists = getattr(self, 'selected_lists', None)
+            if selected_lists:
+                context['lists'] = TaskList.objects.filter(id__in=selected_lists)
+                context['selected_lists'] = selected_lists
+            else:
+                context['lists'] = TaskList.objects.all()
+        
+        # チェックボックス選択状態の保持
+        context['selected_list_ids'] = [int(id) for id in getattr(self, 'selected_lists', [])]
         
         return context
     
@@ -116,8 +125,9 @@ class TaskListView(ListView):
         
         # 選ばれたリストIDがある場合
         if selected_lists:
-            tasks = TaskCreate.objects.filter(list__id__in=selected_lists, user=request.user)
-            return self.render_to_response(self.get_context_data(tasks=tasks, selected_lists=selected_lists))
+            # 選択されたリストIDを保存
+            self.selected_lists = selected_lists
+            return self.get(request, *args, **kwargs)
         else:
             # リストが選ばれていない場合は、全タスクを表示
             return HttpResponseRedirect(reverse('task_list'))
