@@ -37,9 +37,6 @@ Git/GitHub
 <p>- リストの作成・一覧表示・編集・削除</p>
 <p>- リスト名の検索</p>
 <p>- スターのトグル<p>
-
-<h2>他url</h2>
-<p></p>
 <p>- 自動分類(仮)</p>
 
 <h2>設計</h2>
@@ -47,3 +44,6 @@ ER図
 draw.ioを用いて作図しました。 
 
 ![スクリーンショット 2024-11-06 194515](https://github.com/user-attachments/assets/e850d50f-e2d4-498b-9b7d-c4ce654a672d)
+
+<h2>他url</h2>
+<p></p>
