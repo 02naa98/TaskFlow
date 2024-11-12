@@ -24,7 +24,15 @@
                     <!-- リスト項目 -->
                     <li style="display: flex; align-items: center; justify-content: space-between;">
                         <!-- チェックボックス -->
-                        <input type="checkbox" class="list-checkbox" id="checkbox_{{ list.id }}" name="list-checkbox" value="{{ list.id }}">
+                        <!--
+                        チェックボックスの選択状態の管理の仕組み:
+                        1. list.id: 現在ループ中のリストのID
+                        2. selected_list_ids: ビューから渡された選択済みリストIDの配列
+                        3. if文で、現在のリストIDが選択済みIDリストに含まれているか確認
+                        4. 含まれている場合、checkedを出力してチェック状態を維持
+                        -->
+                        <input type="checkbox" class="list-checkbox" id="checkbox_{{ list.id }}" name="list-checkbox" value="{{ list.id }}"
+                        {% if list.id in selected_list_ids %}checked{% endif %}>
                         <label for="checkbox_{{ list.id }}">{{ list.name }}</label>
                         <div class="btn-group">
                         </div>
@@ -59,76 +67,81 @@
         
         <h1>タスク一覧</h1>
         
-        {% if lists %}
-            {% for list in lists %}
-                <div class="list-container" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">
-                    <!-- リスト名 -->
-                    <h2>{{ list.name }}</h2>
+            {% if lists %}
+        {% for list in lists %}
+            <!-- リストのコンテナ -->
+            <div class="list-container" onmouseover="showBorder(this)" onmouseout="hideBorder(this)">
+                <!-- リスト名を表示 -->
+                <h2>{{ list.name }}</h2>
 
-                    <div class="btn-group">
-                        <!-- リスト更新フォーム -->
-                        <form action="{% url 'list_update' list.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="button">更新</button>
-                        </form>
+                <!-- 更新ボタンと削除ボタンのグループ -->
+                <div class="btn-group">
+                    <!-- リストを更新するフォーム -->
+                    <form action="{% url 'list_update' list.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button">更新</button>
+                    </form>
 
-                        <!-- リスト削除フォーム -->
-                        <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
-                            {% csrf_token %}
-                            <button type="submit" class="button">削除</button>
-                        </form>
-                    </div>
-
-                    <!-- タスクリスト（Sortable） -->
-                    <ul class="Sortable" data-list-id="{{list.id}}" id="list_{{list.id}}">
-                        {% for task in list.taskcreate_set.all %}
-                            <li style="display: flex; align-items: center; justify-content: space-between;">
-                                <!-- タスク項目 -->
-                                <span>
-                                    {{ task.title }} - {{ task.due_date }} - {{ task.user.username }}
-                                </span>
-
-                                <!-- タスクのスター付けフォーム -->
-                                <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
-                                    {% csrf_token %}
-                                    <div class='btn-group'>
-                                        <button type="submit">
-                                            <span class="{% if task.is_starred %}starred{% else %}not-starred{% endif %}">
-                                                {% if task.is_starred %}
-                                                    ★  <!-- スターが付いている場合 -->
-                                                {% else %}
-                                                    ☆  <!-- スターが付いていない場合 -->
-                                                {% endif %}
-                                            </span>
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <div>
-                                    <!-- タスク更新ボタン -->
-                                    <form action="{% url 'task_update' task.id %}" method="get">
-                                        <button type="submit" class="btn btn-success">更新</button>
-                                    </form>
-                                    <!-- タスク削除ボタン -->
-                                    <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDeleteTask();" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger">削除</button>
-                                    </form>
-                                </div>
-                            </li>
-                        {% empty %}
-                            <li>タスクはまだ追加されていません。</li>
-                        {% endfor %}
-                    </ul>
+                    <!-- リストを削除するフォーム -->
+                    <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
+                        {% csrf_token %}
+                        <button type="submit" class="button">削除</button>
+                    </form>
                 </div>
-            {% endfor %}
-        {% elif message %}
-            <script>
-                // メッセージが存在する場合にアラートを表示
-                alert('{{ message }}')
-                alert('もう一度検索ボタンをクリックすると一覧表示へ戻ります。')
-            </script>
-        {% endif %}
+
+                <!-- タスクリスト -->
+                <ul class="Sortable" data-list-id="{{list.id}}" id="list_{{list.id}}">
+                    {% for task in list.taskcreate_set.all %}
+                        <li style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- タスクのタイトル、期限、担当ユーザー -->
+                            <span>
+                                {{ task.title }} - {{ task.due_date }} - {{ task.user.username }}
+                            </span>
+
+                            <!-- タスクのスター（お気に入り）を切り替えるフォーム -->
+                            <form action="{% url 'toggle_star' task.id %}" method="post" style="background: none; border: none; cursor: none;">
+                                {% csrf_token %}
+                                <div class='btn-group'>
+                                    <button type="submit">
+                                        <!-- タスクがスターされているかどうかで表示が変わる -->
+                                        <span class="{% if task.is_starred %}starred{% else %}not-starred{% endif %}">
+                                            {% if task.is_starred %}★{% else %}☆{% endif %}
+                                        </span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div>
+                                <!-- タスクを更新するフォーム -->
+                                <form action="{% url 'task_update' task.id %}" method="get">
+                                    <button type="submit" class="btn btn-success">更新</button>
+                                </form>
+                                <!-- タスクを削除するフォーム -->
+                                <form action="{% url 'task_delete' task.id %}" method="post" onsubmit="return confirmDeleteTask();" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">削除</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <!-- タスクがまだ追加されていない場合のメッセージ -->
+                        <li>タスクはまだ追加されていません。</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% elif filter_message %}
+        <!-- リストがフィルタリングされたときのメッセージ表示 -->
+        <p>{{ filter_message }}</p>
+        <script>
+            alert('{{ filter_message }}');
+            alert('もう一度検索ボタンをクリックすると一覧表示へ戻ります。');
+        </script>
+    {% else %}
+        <!-- リストが選択されていない場合のメッセージ -->
+        <p>リストが選択されていません。</p>
+    {% endif %}
+
         
         
     </div>
