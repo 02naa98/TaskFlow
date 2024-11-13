@@ -42,6 +42,9 @@
             <div class="btn-group">
                 <!-- リスト選択ボタン -->
                 <button type="submit" class="button">選択したリストを表示</button>
+
+                <!-- 選択をクリアボタン (選択表示ボタンの右に空白を設ける) -->
+                <!--<button type="button" class="button clear-selection" onclick="clearSelection()">選択をクリア</button>-->
             </div>
         </form>
         
@@ -85,7 +88,7 @@
                     <!-- リストを削除するフォーム -->
                     <form action="{% url 'list_delete' list.id %}" method="post" onsubmit="return confirmDeleteList();">
                         {% csrf_token %}
-                        <button type="submit" class="button">削除</button>
+                        <button type="submit" class="button clear-selection">削除</button>
                     </form>
                 </div>
 
