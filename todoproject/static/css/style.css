@@ -181,13 +181,21 @@ label {
 
 /* ボタングループ内の最後以外のボタンに線を追加 */
 .btn-group button:not(:last-child) {
-    border-right: 1px solid #00cf83; /* 最後のボタン以外の右側に線を追加 */
     padding-right: 10px; /* 線のスペースを確保 */
 }
 
 /* ボタンのホバー時 */
 .btn-group button:hover {
     background-color: rgba(0, 123, 255, 0.1); /* ホバー時の背景色 */
+}
+
+/* 選択をクリアボタン用のスタイル (色を反転) */
+.button.clear-selection {
+    background-color: #007bff; /* 背景色 */
+    color: white; /* テキストの色 */
+}
+.button.clear-selection:hover {
+    background-color: red;
 }
 
 /* フィルターレーベルのスタイル */
@@ -204,6 +212,8 @@ label {
 .not-starred {
     color: #007bff; /* スターが付いていない場合の色 */
 }
+
+
 
                                         /*          task_list.html          */
                                         /*          profile.html          */
