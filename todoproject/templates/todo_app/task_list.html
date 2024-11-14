@@ -13,15 +13,12 @@
         <!-- タスクリストの見出し -->
         <h1>タスクリスト</h1>
         
-        <!-- リストフォーム(仮)へのリンク -->
-        <a href="{% url 'select_list' %}"><h5>リストフォーム(仮)</h5></a>
-
         <!-- チェックボックス付きリスト選択フォーム -->
         <form method="post" action="{% url 'task_list' %}" id="listFilterForm">
             {% csrf_token %}
             <ul>
                 {% for list in lists %}
-                    <!-- リスト項目 -->
+                    <!-- リスト項目 --> 
                     <li style="display: flex; align-items: center; justify-content: space-between;">
                         <!-- チェックボックス -->
                         <!--

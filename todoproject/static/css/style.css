@@ -127,7 +127,7 @@ label {
     margin: 3px;
 }
 
-/* チェックボックスが選択されているときのラベル */
+/* チェックボックスが選択されているときのラベル */ 
 .list-filter input[type="checkbox"]:checked + label {
     background: #00809d;
     color: #fff; /* チェックされたときのラベルのスタイル */

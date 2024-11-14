@@ -51,15 +51,6 @@ class ProfileView(DetailView, LoginRequiredMixin):
 # リスト管理関連ビュー
 # ==========================
 
-# 簡易チェックリスト
-class ListSelectView(FormView):
-    template_name = 'todo_app/list_select_form.html'
-    form_class = ListSelectForm
-    success_url = reverse_lazy('task_list')
-
-    def form_valid(self, form):
-        return super().form_valid(form)  # フォームが正常に送信された場合はリダイレクト
-
 # リスト作成
 class ListCreateView(CreateView):
     model = TaskList
